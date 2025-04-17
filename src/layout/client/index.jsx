@@ -4,9 +4,9 @@ import { Outlet } from "react-router-dom";
 
 export const LayoutClient = () => {
   return (
-    <>
+    <div className="h-screen">
       <Navbar />
       <Outlet />
-    </>
+    </div>
   );
 };

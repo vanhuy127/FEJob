@@ -1,13 +1,43 @@
-import React from "react";
+import React, { useContext } from "react";
 import { useUserStore } from "../../store/UserStore";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
+import { AlertContext } from "../../provider/AlertProvider";
+import ApiService from "../../service/api";
 
 export const Navbar = () => {
-  const { getCurrentUser } = useUserStore();
+  const { getCurrentUser, setCurrentUser } = useUserStore();
+  const { handleOpenAlert } = useContext(AlertContext);
   const currentUser = getCurrentUser();
+  const navigate = useNavigate();
 
-  const handleLogout = (e) => {
+  const handleLogout = async (e) => {
     e.preventDefault();
+    try {
+      const res = await ApiService.callLogout();
+      console.log("logout res", res);
+      if (res.status === 200) {
+        handleOpenAlert({
+          type: "success",
+          message: "Đăng xuất thành công",
+        });
+        setCurrentUser({});
+        localStorage.removeItem("accessToken");
+        setTimeout(() => {
+          navigate("/login");
+        }, 1000);
+        return;
+      }
+      handleOpenAlert({
+        type: "error",
+        message: "Có lỗi xảy ra, vui lòng thử lại.",
+      });
+    } catch (err) {
+      console.error(err);
+      handleOpenAlert({
+        type: "error",
+        message: "Có lỗi xảy ra, vui lòng thử lại.",
+      });
+    }
   };
   return (
     <nav className="bg-white border-gray-200 dark:bg-gray-900">

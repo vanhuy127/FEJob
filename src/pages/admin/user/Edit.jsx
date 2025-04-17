@@ -370,7 +370,7 @@ export const EditUser = () => {
                     handleSelectChange(e, companies, e.target.name);
                   }}
                   id="company"
-                  value={formData.company.id}
+                  value={formData.company?.id}
                   className={`${
                     errors.company &&
                     "border-red-500 text-red-900 placeholder-red-700 focus:ring-red-500 focus:border-red-500 dark:text-red-500 dark:placeholder-red-500 dark:border-red-500"

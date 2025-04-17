@@ -17,6 +17,7 @@
     "axios": "^1.8.1",
     "flowbite-react": "^0.10.2",
     "flowbite-typography": "^1.0.5",
+    "html-react-parser": "^5.2.3",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
     "react-router-dom": "^6.30.0",

@@ -159,6 +159,9 @@ const TextEditor = ({ onChange, initData }) => {
         onChange(html);
       },
     });
+
+    console.log("editorInstance", editorInstance.current);
+
     return () => {
       editorInstance.current?.destroy();
       editorInstance.current = null;

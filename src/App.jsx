@@ -2,8 +2,11 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { LayoutClient } from "./layout/client";
 import { LayoutAdmin } from "./layout/admin";
 import { AlertProvider } from "./provider/AlertProvider";
+import { PopUpCVProvider } from "./provider/PopUpCVProvider";
 import { PopUpProvider } from "./provider/PopUpProvider";
-
+import { useEffect } from "react";
+import { useUserStore } from "./store/UserStore";
+import ApiService from "./service/api";
 // Pages - Auth
 import { Login } from "./pages/auth/Login";
 import { Register } from "./pages/auth/Register";
@@ -28,15 +31,20 @@ import { CreateSkill } from "./pages/admin/skill/Create";
 import { EditSkill } from "./pages/admin/skill/Edit";
 import { Resumes } from "./pages/admin/resume";
 import { EditResume } from "./pages/admin/resume/Edit";
+import { Permissions } from "./pages/admin/permission";
+import { Roles } from "./pages/admin/role";
+import { CreateRole } from "./pages/admin/role/Create";
+import { EditRole } from "./pages/admin/role/Edit";
 
 // Shared Components
 import { ProtectedRoute } from "./components/share/ProtectedRoute";
 import { NoPage } from "./pages/NoPage";
 import { NoPermission } from "./pages/NoPermission";
-//
-import { useEffect } from "react";
-import { useUserStore } from "./store/UserStore";
-import ApiService from "./service/api";
+// Client Pages
+import { Company } from "./pages/client/Company";
+import { Job } from "./pages/client/Job";
+import { DetailsCompany } from "./pages/client/DetailsCompany";
+import { DetailsJob } from "./pages/client/DetailsJob";
 
 // Danh sách các route trong admin
 const adminRoutes = [
@@ -79,6 +87,22 @@ const adminRoutes = [
     element: <EditResume />,
     permission: "Update a resume",
   },
+  {
+    path: "permission",
+    element: <Permissions />,
+    permission: "Get permissions with pagination",
+  },
+  {
+    path: "role",
+    element: <Roles />,
+    permission: "Get roles with pagination",
+  },
+  { path: "role/create", element: <CreateRole />, permission: "Create a role" },
+  {
+    path: "role/edit/:roleId",
+    element: <EditRole />,
+    permission: "Update a role",
+  },
 ];
 
 function App() {
@@ -104,38 +128,49 @@ function App() {
   return (
     <AlertProvider>
       <PopUpProvider>
-        <BrowserRouter>
-          <Routes>
-            {/* Auth Routes */}
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/change-password" element={<ChangePassword />} />
+        <PopUpCVProvider>
+          <BrowserRouter
+            future={{ v7_relativeSplatPath: true, v7_startTransition: true }}
+          >
+            <Routes>
+              {/* Auth Routes */}
+              <Route path="/login" element={<Login />} />
+              <Route path="/register" element={<Register />} />
+              <Route path="/change-password" element={<ChangePassword />} />
 
-            {/* Public Routes */}
-            <Route element={<LayoutClient />}>
-              <Route index element={<Home />} />
-            </Route>
-
-            {/* Admin Routes */}
-            <Route path="/admin/" element={<LayoutAdmin />}>
-              {adminRoutes.map(({ path, element, permission }) => (
+              {/* Public Routes */}
+              <Route element={<LayoutClient />}>
+                <Route index element={<Home />} />
+                <Route path="/company" element={<Company />} />
+                <Route path="/job" element={<Job />} />
                 <Route
-                  key={path}
-                  path={path}
-                  element={
-                    <ProtectedRoute requiredPermission={permission}>
-                      {element}
-                    </ProtectedRoute>
-                  }
+                  path="/company/:companyId"
+                  element={<DetailsCompany />}
                 />
-              ))}
-            </Route>
+                <Route path="/job/:jobId" element={<DetailsJob />} />
+              </Route>
 
-            {/* 404 Page */}
-            <Route path="*" element={<NoPage />} />
-            <Route path="/no-permission" element={<NoPermission />} />
-          </Routes>
-        </BrowserRouter>
+              {/* Admin Routes */}
+              <Route path="/admin/" element={<LayoutAdmin />}>
+                {adminRoutes.map(({ path, element, permission }) => (
+                  <Route
+                    key={path}
+                    path={path}
+                    element={
+                      <ProtectedRoute requiredPermission={permission}>
+                        {element}
+                      </ProtectedRoute>
+                    }
+                  />
+                ))}
+              </Route>
+
+              {/* 404 Page */}
+              <Route path="*" element={<NoPage />} />
+              <Route path="/no-permission" element={<NoPermission />} />
+            </Routes>
+          </BrowserRouter>
+        </PopUpCVProvider>
       </PopUpProvider>
     </AlertProvider>
   );

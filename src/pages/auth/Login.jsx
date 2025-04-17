@@ -29,8 +29,20 @@ export const Login = () => {
     }));
   };
 
+  const fetchUser = async () => {
+    const user = await ApiService.callFetchAccount();
+    if (user.status === 200) {
+      console.log("fetch current user");
+
+      setCurrentUser(user.data.data.user);
+    } else {
+      setCurrentUser({});
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setIsLoading(true);
     const validationErrors = validateFields(formData, validationRules);
     setErrors(validationErrors);
 
@@ -48,6 +60,8 @@ export const Login = () => {
           axiosInstance.defaults.headers[
             "Authorization"
           ] = `Bearer ${res.data.data.access_token}`;
+
+          await fetchUser();
 
           handleOpenAlert({
             type: "success",
@@ -67,10 +81,11 @@ export const Login = () => {
         } else {
           handleOpenAlert({
             type: "error",
-
             message: "Có lỗi xảy ra, vui lòng thử lại.",
           });
         }
+      } finally {
+        setIsLoading(false);
       }
     }
   };
