@@ -80,7 +80,8 @@ export const DetailsJob = () => {
 
   const handleApply = () => {
     openPopup({
-      message: "Bạn có chắc chắn muốn xóa người dùng này không?",
+      user: currentUser,
+      job: job,
       // onConfirm: () => deleteUser(id),
     });
   };
